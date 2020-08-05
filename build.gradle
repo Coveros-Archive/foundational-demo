@@ -611,6 +611,8 @@ dependencyCheckAnalyze.finalizedBy 'printReportPathsDependencyCheck'
 task deployToTestWindowsLocal(type: Copy) {
     dependsOn war
 
+    println "[DEBUG] Deploy directory $deploy_directory"
+
     if (project.hasProperty('deploy_directory')) {
         from("$buildDir/libs/") {
             // a bit of a hack - would prefer to directly target the output of the war task
