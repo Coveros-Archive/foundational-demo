@@ -84,8 +84,8 @@ public class SeleniumTests {
         driver.get("http://localhost:8080/demo/library.html");
 
         // using the arrow keys to select an element is a very "dropdown" kind of behavior.
-        driver.findElement(By.id("lend_book")).sendKeys(Keys.ARROW_UP);
-        driver.findElement(By.id("lend_borrower")).sendKeys(Keys.ARROW_UP);
+        driver.findElement(By.id("lend_book")).findElement(By.xpath("//option[contains(.,\'some book\')]")).click();
+        driver.findElement(By.id("lend_borrower")).findElement(By.xpath("//option[contains(.,\'some borrower\')]")).click();
         driver.findElement(By.id("lend_book_submit")).click();
         final String result = driver.findElement(By.id("result")).getText();
         assertEquals("SUCCESS", result);
@@ -122,7 +122,7 @@ public class SeleniumTests {
         // using the arrow keys to select an element is a very "dropdown" kind of behavior.
         driver.findElement(By.id("lend_book")).sendKeys("f");
         driver.findElement(By.xpath("//li[contains(.,\'f\')]")).click();
-        driver.findElement(By.id("lend_borrower")).sendKeys(Keys.ARROW_UP);
+        driver.findElement(By.id("lend_borrower")).findElement(By.xpath("//option[contains(.,\'some borrower\')]")).click();
         driver.findElement(By.id("lend_book_submit")).click();
         final String result = driver.findElement(By.id("result")).getText();
         assertEquals("SUCCESS", result);
@@ -142,8 +142,8 @@ public class SeleniumTests {
         driver.get("http://localhost:8080/demo/library.html");
 
         // using the arrow keys to select an element is a very "dropdown" kind of behavior.
-        driver.findElement(By.id("lend_book")).sendKeys(Keys.ARROW_UP);
-        driver.findElement(By.id("lend_borrower")).sendKeys(Keys.ARROW_UP);
+        driver.findElement(By.id("lend_book")).findElement(By.xpath("//option[contains(.,\'some \"book\')]")).click();
+        driver.findElement(By.id("lend_borrower")).findElement(By.xpath("//option[contains(.,\'some \"borrower\')]")).click();
         driver.findElement(By.id("lend_book_submit")).click();
         final String result = driver.findElement(By.id("result")).getText();
         assertEquals("SUCCESS", result);
