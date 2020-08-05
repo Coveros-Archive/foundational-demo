@@ -73,7 +73,6 @@ pipeline {
     // require a whole system to be running.
     stage('Deploy to test') {
       steps {
-      println "[DEBUG] Deploy directory $deploy_directory"
       sh './gradlew deployToTestWindowsLocal'
       // pipenv needs to be installed and on the path for this to work.
       sh 'PIPENV_IGNORE_VIRTUALENVS=1 pipenv install'
