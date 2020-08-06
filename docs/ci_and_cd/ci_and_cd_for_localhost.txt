@@ -21,6 +21,7 @@ Download and install JDK11, put it on your path (Sonarqube 8 requires JDK11)
 
 Install Jmeter, put the path to its bin directory on the path.
 Read "Installing Jmeter" in the document "perf_testing_with_jmeter.txt", follow that.
+You MUST open docs/performance_testing/50_users_at_once.jmx once within jmeter and accept several plugin installs.
 
 Download Demo somewhere - it's at https://github.com/7ep/demo
 
