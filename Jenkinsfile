@@ -26,7 +26,7 @@ stage("test") {
         connection.setRequestProperty("Content-Type", "application/json")
         connection.getOutputStream().write(data.getBytes("UTF-8"))
         def post = connection.getResponseCode()
-        def moreInfo = connection.getText()
+        def moreInfo = connection.responseMessage
         println post
         println moreInfo
         if (post == 200) {
