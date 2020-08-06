@@ -27,7 +27,7 @@ stage("test") {
         connection.getOutputStream().write(data.getBytes("UTF-8"))
         def post = connection.getResponseCode()
         println post
-        println post.getInputStream.getTest()
+        println post.getInputStream.getText()
 
         if (post == 200) {
             println post.getInputStream().getText()
