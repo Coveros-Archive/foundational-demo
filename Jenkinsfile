@@ -20,7 +20,7 @@ stage("test") {
             "RunnerTestName": "Bar",
             "RunnerMessage": "spam"}
         """
-        def connection = new URL("${api_base}/projects/10/test-runs/record")
+        def connection = new URL("${api_base}/projects/10/test-runs/record").openConnection()
         connection.setRequestMethod("POST")
         connection.setDoOutput(true)
         connection.setRequestProperty("Content-Type", "application/json")
@@ -28,7 +28,7 @@ stage("test") {
         def post = connection.getResponseCode()
         println post
         println post.getInputStream.getTest()
-        
+
         if (post == 200) {
             println post.getInputStream().getText()
         }
