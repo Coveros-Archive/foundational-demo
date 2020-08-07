@@ -173,12 +173,9 @@ pipeline {
     }
 
     stage('Send results to spira') {
-      
       withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-        def api_token = token
-        def api_user = user
         steps {
-          sh "./gradlew collectResutlsForSpira -Papi_token=$api_token -Papi_user=$api_user"
+          sh "./gradlew collectResutlsForSpira -Papi_token=$token -Papi_user=$user"
         }
       }
     
