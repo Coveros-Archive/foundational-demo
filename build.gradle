@@ -641,5 +641,11 @@ task runPerfTests(type:Exec) {
     }
 }
 
+task collectResutlsForSpira(type:Exec) {
+    workingDir '.'
+    environment 'API_TOKEN', "$api_token", 'API_USER', "$api_user"
+    commandLine 'pipenv', 'run', 'python', 'collect-results-for-spira.py'
+}
+
 
 
