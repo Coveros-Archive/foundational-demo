@@ -154,7 +154,7 @@ pipeline {
       steps {
 	 sh 'export PATH=$PATH:/Users/anaskvortsova/apache-jmeter-5.3/bin/jmeter'
 	 sh './gradlew --stop'
-         sh './gradlew runPerfTests --stacktrace'
+         sh './gradlew runPerfTests --scan'
       }
     }
 
