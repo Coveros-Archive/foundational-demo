@@ -647,7 +647,7 @@ task collectResutlsForSpira(type:Exec) {
         environment 'API_TOKEN', api_token
         environment 'API_USER', api_user
     }
-    commandLine 'pipenv', 'run', 'python', 'collect-results-for-spira.py'
+    commandLine 'pipenv', 'run', 'python', 'collect-results-for-spira.py', '--status', '2', '--message', 'Automated Acceptance Tests Passed'
 }
 
 
