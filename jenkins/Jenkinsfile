@@ -152,8 +152,7 @@ pipeline {
     // for a set of common tasks.
     stage('Testing performance') {
       steps {
-	 sh 'export PATH=/usr/local/opt/krb5/sbin:/usr/local/opt/libpq/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home/bin:/Users/anaskvortsova:/Users/anaskvortsova/apache-jmeter-5.3/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin'
-         sh './gradlew runPerfTests --debug'
+         sh './gradlew runPerfTests'
       }
     }
 
