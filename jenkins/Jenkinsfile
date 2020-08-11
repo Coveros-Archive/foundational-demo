@@ -152,7 +152,7 @@ pipeline {
     // for a set of common tasks.
     stage('Testing performance') {
       steps {
-	 sh 'export PATH=$PATH:/Users/anaskvortsova/apache-jmeter-5.3/bin'
+	 sh 'export PATH=/Users/anaskvortsova/apache-jmeter-5.3/bin'
          sh './gradlew runPerfTests --debug'
       }
     }
