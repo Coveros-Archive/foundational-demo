@@ -175,8 +175,8 @@ pipeline {
     stage('Send results to spira') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-          sh "./gradlew collectResutlsForSpira -Papi_token=$token -Papi_user=$user"
-
+          // sh "./gradlew collectResutlsForSpira -Papi_token=$token -Papi_user=$user"
+          sh "API_TOKEN=$token && API_USER=$user && pipenv run python collect-results-for-spira.py --status 2 --message Automated Acceptance Tests Passed"
         }
       }
     }
