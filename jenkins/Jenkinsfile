@@ -187,6 +187,7 @@ pipeline {
       steps {
         // just a token operation while we pretend to deploy
         sh 'sleep 5'
+	echo "CUCUMBER tests report: http://localhost:8080/workspace/Demo/build/reports/bdd/cucumber-html-reports/overview-features.html"
       }
     }
 
