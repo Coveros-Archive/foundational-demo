@@ -176,7 +176,6 @@ pipeline {
    
       steps {
         withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-          // sh "./gradlew collectResutlsForSpira -Papi_token=$token -Papi_user=$user"
           sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated Acceptance Tests Passed'"
         }
       }

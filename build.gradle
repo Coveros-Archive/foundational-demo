@@ -641,14 +641,5 @@ task runPerfTests(type:Exec) {
     }
 }
 
-task collectResutlsForSpira(type:Exec) {
-    workingDir '.'
-    if (project.hasProperty('api_token') && project.hasProperty('api_user')) {
-        environment 'API_TOKEN', api_token
-        environment 'API_USER', api_user
-    }
-    commandLine 'pipenv', 'run', 'python', 'collect-results-for-spira.py', '--status', '2', '--message', 'Automated Acceptance Tests Passed'
-}
-
 
 
