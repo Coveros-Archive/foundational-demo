@@ -7,17 +7,20 @@ import argparse
 parser = argparse.ArgumentParser(description='Give build status')
 parser.add_argument('-s', '--status', type=int, help="the build status. 1=failure, 2=success")
 parser.add_argument('-m', '--message', type=str, help="any relevant message")
-
+parser.add_argument('-t', '--token', type=str, help="SpiraPlan API token")
+parser.add_argument('-u', '--user', type=str, help="SpiraPlan API user")
 args = parser.parse_args()
 
 message = args.message
 status = args.status
+api_key = args.token
+api_user = args.user
 
 CREATE_HOST = False
 
 api_base = "https://coveros.spiraservice.net/services/v5_0/RestService.svc"
-api_key = os.environ['API_TOKEN']
-api_user = os.environ['API_USER']
+# api_key = os.environ['API_TOKEN']
+# api_user = os.environ['API_USER']
 # test_status = os.environ['TEST_STATUS']
 # consider a switch for different tests
 
