@@ -1,70 +1,48 @@
 // This jenkinsfile is used to run CI/CD on my local (Windows) box, no VM's needed.
 
-pipeline {
+node {
 
-  agent any
+  // agent any
 
   stages {
 
     // build the war file (the binary).  This is the only
     // place that happens.
     stage('Build') {
-      steps {
-        sh './gradlew clean assemble'
-      }
+      sh './gradlew clean assemble'
     }
 
     // run all the unit tests - these do not require anything else
     // to be running and most run very quickly.
     stage('Unit Tests') {
-      steps {
-        sh './gradlew test'
-      }
-      post {
-        always {
-          junit 'build/test-results/test/*.xml'
-        }
-      }
+      sh './gradlew test'
+      junit 'build/test-results/test/*.xml'
     }
 
     // run the tests which require connection to a
     // running database.
     stage('Database Tests') {
-      steps {
-        sh './gradlew integrate'
-      }
-      post {
-        always {
-          junit 'build/test-results/integrate/*.xml'
-        }
-      }
+      sh './gradlew integrate'
+      junit 'build/test-results/integrate/*.xml'
     }
 
     // These are the Behavior Driven Development (BDD) tests
     // See the files in src/bdd_test
     // These tests do not require a running system.
     stage('Automated Acceptance Tests') {
-      steps {
         sh './gradlew generateCucumberReports'
         // generate the code coverage report for jacoco
         sh './gradlew jacocoTestReport'
-      }
-      post {
-          always {
-            junit 'build/test-results/bdd/*.xml'
-          }
-        }
+        junit 'build/test-results/bdd/*.xml'
     }
 
     // Runs an analysis of the code, looking for any
     // patterns that suggest potential bugs.
     stage('Static Analysis') {
-      steps {
         sh './gradlew sonarqube'
         // wait for sonarqube to finish its analysis
         sleep 5
         sh './gradlew checkQualityGate'
-      }
     }
 
 
@@ -72,27 +50,19 @@ pipeline {
     // get it running, in preparation for tests that
     // require a whole system to be running.
     stage('Deploy to test') {
-      steps {
       sh './gradlew deployToTestWindowsLocal -Pdeploy_directory=\"/Users/matthew/Downloads/apache-tomcat-9.0.37/webapps\"'
       // pipenv needs to be installed and on the path for this to work.
       sh 'PIPENV_IGNORE_VIRTUALENVS=1 pipenv install'
 
       // Wait here until the server tells us it's up and listening
       sh './gradlew waitForHeartBeat'
-      }
     }
 
 
     // Run the tests which investigate the functioning of the API.
     stage('API Tests') {
-      steps {
-        sh './gradlew runApiTests'
-      }
-      post {
-        always {
-          junit 'build/test-results/api_tests/*.xml'
-        }
-      }
+      sh './gradlew runApiTests'
+      junit 'build/test-results/api_tests/*.xml'
     }
 
     // We use a BDD framework for some UI tests, Behave, because Python rules
@@ -102,15 +72,9 @@ pipeline {
     // not that every little detail of UI functionality is correct.  For
     // that purpose, see the following stage, "UI Tests"
     stage('UI BDD Tests') {
-      steps {
-        sh './gradlew runBehaveTests'
-        sh './gradlew generateCucumberReport'
-      }
-      post {
-        always {
-          junit 'build/test-results/bdd_ui/*.xml'
-        }
-      }
+      sh './gradlew runBehaveTests'
+      sh './gradlew generateCucumberReport'
+      junit 'build/test-results/bdd_ui/*.xml'
     }
 
     // This set of tests investigates the functionality of the UI.
@@ -118,14 +82,8 @@ pipeline {
     // only focuses on essential capability and therefore only
     // covers a small subset of the possibilities of UI behavior.
     stage('UI Tests') {
-        steps {
-            sh 'cd src/ui_tests/java && ./gradlew clean test'
-        }
-        post {
-            always {
-                junit 'src/ui_tests/java/build/test-results/test/*.xml'
-            }
-        }
+      sh 'cd src/ui_tests/java && ./gradlew clean test'
+      junit 'src/ui_tests/java/build/test-results/test/*.xml'    
     }
 
     // Run OWASP's "DependencyCheck". https://owasp.org/www-project-dependency-check/
@@ -142,18 +100,14 @@ pipeline {
     // we are importing has any major known vulnerabilities. If so,
     // the build will halt at this point.
     stage('Analyze security of dependencies') {
-      steps {
-         sh './gradlew dependencyCheckAnalyze'
-      }
+      sh './gradlew dependencyCheckAnalyze'
     }
 
     // Run Jmeter performance testing https://jmeter.apache.org/
     // This test simulates 50 users concurrently using our software
     // for a set of common tasks.
     stage('Testing performance') {
-      steps {
-         sh './gradlew runPerfTests'
-      }
+      sh './gradlew runPerfTests'
     }
 
     // Runs mutation testing against some subset of our software
@@ -167,26 +121,19 @@ pipeline {
     // continue to pass, which implies that the test wasn't really
     // providing any value for those lines.
     stage('Mutation testing') {
-      steps {
-         sh './gradlew pitest'
-      }
+      sh './gradlew pitest'
     }
 
     stage('Send results to spira') {
-   
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-          def results = ["Functional", "Security"]
-          results.each { i ->
-            sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated $i Tests Passed'"
-          }
+      withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
+        def results = ["Functional", "Security"]
+        results.each { i ->
+          sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated $i Tests Passed'"
         }
       }
     }
     stage('Build documentation') {
-      steps {
-         sh './gradlew javadoc'
-      }
+      sh './gradlew javadoc'
     }
 
 
@@ -196,10 +143,8 @@ pipeline {
     // happens, since this is a demo project.
     // Remove this
     stage('Deploy to Prod') {
-      steps {
-        // just a token operation while we pretend to deploy
-        sh 'sleep 5'
-      }
+      // just a token operation while we pretend to deploy
+      sh 'sleep 5'
     }
 
   }
