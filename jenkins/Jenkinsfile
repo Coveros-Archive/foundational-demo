@@ -176,7 +176,10 @@ pipeline {
    
       steps {
         withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-          sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated Acceptance Tests Passed'"
+          def results = ["Functional", "Security"]
+          results.each { i ->
+            sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated $i Tests Passed'"
+          }
         }
       }
     }
@@ -191,6 +194,7 @@ pipeline {
     // fails, we won't get here.  Note that we aren't really doing anything - this
     // is a token step, to indicate whether we would have deployed or not.  Nothing actually
     // happens, since this is a demo project.
+    // Remove this
     stage('Deploy to Prod') {
       steps {
         // just a token operation while we pretend to deploy
