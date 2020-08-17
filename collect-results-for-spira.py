@@ -5,11 +5,11 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description='Give build status')
+parser.add_argument('-c', '--testcase', type=int, help="test case to trigger a run of")
 parser.add_argument('-s', '--status', type=int, help="the build status. 1=failure, 2=success")
 parser.add_argument('-m', '--message', type=str, help="any relevant message")
 parser.add_argument('-t', '--token', type=str, help="SpiraPlan API token")
 parser.add_argument('-u', '--user', type=str, help="SpiraPlan API user")
-parser.add_argument('-c', '--testcase', type=int, help="test case to trigger a run of")
 args = parser.parse_args()
 
 message = args.message
