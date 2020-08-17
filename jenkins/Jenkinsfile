@@ -138,7 +138,7 @@ node {
           pipenv run python \
           collect-results-for-spira.py \
           --token=$token --user=$user \
-          --status=2 --testcase='$i' \
+          --status=2 -c '$i' \
           --message 'Automated $t Tests Passed'
           """
       }
