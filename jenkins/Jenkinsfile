@@ -128,7 +128,7 @@ node {
     withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
       def results = ["Functional":35, "Security":39]
       results.each { t, i ->
-        sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --testcase=$i --status=2 --message 'Automated $t Tests Passed'"
+        sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --caseid=$i --status=2 --message 'Automated $t Tests Passed'"
       }
     }
   }
