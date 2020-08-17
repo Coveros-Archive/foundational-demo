@@ -126,9 +126,9 @@ node {
 
   stage('Send results to spira') {
     withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-      def results = ["Functional", "Security"]
-      results.each { i ->
-        sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated $i Tests Passed'"
+      def results = ["Functional":35, "Security":39]
+      results.each { t, i ->
+        sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --testcase=$i --message 'Automated $t Tests Passed'"
       }
     }
   }
