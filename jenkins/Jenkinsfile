@@ -134,11 +134,13 @@ node {
               --token=$token --user=$user 
               --status=2 --testcase=$i 
               --message 'Automated $t Tests Passed'"""
-        sh """pipenv run python
-              collect-results-for-spira.py 
-              --token=$token --user=$user 
-              --status=2 --testcase=$i 
-              --message 'Automated $t Tests Passed'"""
+        sh """\
+          pipenv run python \
+          collect-results-for-spira.py \
+          --token=$token --user=$user \
+          --status=2 --testcase=$i \
+          --message 'Automated $t Tests Passed'
+          """
       }
     }
   }
