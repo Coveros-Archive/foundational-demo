@@ -41,7 +41,7 @@ payload = {
     "ConcurrencyDate":"/Date({})/".format(round(datetime.datetime.now().timestamp())),
     "ExecutionStatusId":status, # 1 = fail, 2 = pass, 0 = BREAKS IT # sort of param
     "StartDate":"/Date({})/".format(round(datetime.datetime.now().timestamp())),
-    "TestCaseId":35, # param
+    "TestCaseId":test_case, # param
     "TestRunTypeId":1,
     "TestRunFormatId":0,
     "RunnerName":"jenkins",
