@@ -51,6 +51,10 @@ plugins {
     // see https://github.com/kelloggm/checkerframework-gradle-plugin
     id "org.checkerframework" version "0.5.0"
 
+    // BlueOcean provides a sophisticated visualization of CD pipelines, 
+    //allowing for fast and intuitive comprehension of software pipeline status
+    id "blueocean" version "1.23.2"
+
 }
 
 // Configure our javadoc to include an overview for our project, a
