@@ -172,6 +172,14 @@ pipeline {
       }
     }
 
+    stage('Send results to spira') {
+   
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
+          sh "pipenv run python collect-results-for-spira.py --token=$token --user=$user --status 2 --message 'Automated Acceptance Tests Passed'"
+        }
+      }
+    }
     stage('Build documentation') {
       steps {
          sh './gradlew javadoc'
