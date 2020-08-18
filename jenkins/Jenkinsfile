@@ -129,11 +129,13 @@ node {
 
   stage('Send results to spira') {
     withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-      sh "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user --caseid=35 --status=2 --message 'Debug debug debug'"
+      // sh "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user --caseid=35 --status=2 --message 'Debug debug debug'"
 
       def results = ["Functional":35, "Security":39]
       results.each { t, i ->
-        sh "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user --caseid=$i --status=2 --message 'Automated $t Tests Passed'"
+        sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
+        --caseid=$i --status=2 --message 'Automated $t Tests Passed' \
+        --details=`Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL"""
       }
     }
   }
