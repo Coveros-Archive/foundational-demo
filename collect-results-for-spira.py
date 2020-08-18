@@ -11,6 +11,7 @@ parser.add_argument('-m', '--message', type=str, help="any relevant message")
 parser.add_argument('-t', '--token', type=str, help="SpiraPlan API token")
 parser.add_argument('-u', '--user', type=str, help="SpiraPlan API user")
 parser.add_argument('-d', '--details', type=str, help="Additonal test details")
+parser.add_argument('-b', '--buildName', type=str, help="Build name in Jenkins")
 args = parser.parse_args()
 
 message = args.message
@@ -19,6 +20,7 @@ api_key = args.token
 api_user = args.user
 test_case = args.caseid
 details = args.details
+build_name = args.buildName
 
 CREATE_HOST = False
 
@@ -49,7 +51,7 @@ payload = {
     "RunnerName":"jenkins",
     "AutomationHostId": 7, # 'jenkins' automation host in spiraplan
     "RunnerStackTrace": details, # not really a stacktrace
-    "RunnerTestName": "Bar",
+    "RunnerTestName": build_name,
     "RunnerMessage": message} # param
 
 # hit projects/{project_id}/test-runs/record

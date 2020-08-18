@@ -134,8 +134,9 @@ node {
       def results = ["Functional":35, "Security":39]
       results.each { t, i ->
         sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
-        --caseid=$i --status=2 --message 'Automated $t Tests Passed' \
-        --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL'"""
+        --caseid=$i --status=2 --buildName=$t \
+        --message='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL' \
+        --details='See Jenkins for build log'"""
       }
     }
   }
