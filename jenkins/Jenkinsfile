@@ -134,7 +134,7 @@ node {
       def results = ["Acceptance Tests":35, "Dependency Check":39]
       results.each { t, i ->
         sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
-        --caseid=$i --status=2 --buildName=$t \
+        --caseid=$i --status=2 --buildName='$t' \
         --message='See Jenkins for build log' \
         --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL'"""
       }
