@@ -152,7 +152,7 @@ pipeline {
     // for a set of common tasks.
     stage('Testing performance') {
       steps {
-         sh './gradlew runPerfTests'
+         sh './gradlew runPerfTests --scan'
       }
     }
 
