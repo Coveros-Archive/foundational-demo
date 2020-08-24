@@ -40,7 +40,8 @@ node {
   // See the files in src/bdd_test
   // These tests do not require a running system.
   stage('Automated Acceptance Tests') {
-      results["Acceptance Tests"]["status"] = sh(script: './gradlew generateCucumberReports', returnStatus: true)
+      result = sh(script: './gradlew generateCucumberReports', returnStatus: true)
+      results["Acceptance Tests"]["status"] = (result == 0) ? 2 : 1
       // generate the code coverage report for jacoco
       sh './gradlew jacocoTestReport'
       junit 'build/test-results/bdd/*.xml'
@@ -71,7 +72,8 @@ node {
 
   // Run the tests which investigate the functioning of the API.
   stage('API Tests') {
-    results["API Tests"]["status"] = sh(script: './gradlew runApiTests', returnStatus: true)
+    result = sh(script: './gradlew runApiTests', returnStatus: true)
+    results["API Tests"]["status"] = (result == 0) ? 2 : 1
     junit 'build/test-results/api_tests/*.xml'
   }
 
@@ -83,7 +85,8 @@ node {
   // that purpose, see the following stage, "UI Tests"
   stage('UI BDD Tests') {
     sh './gradlew runBehaveTests'
-    results["UI BDD Tests"]["status"] = sh(script: './gradlew generateCucumberReport', returnStatus: true)
+    result = sh(script: './gradlew generateCucumberReport', returnStatus: true)
+    results["UI BDD Tests"]["status"] = (result == 0) ? 2 : 1
     junit 'build/test-results/bdd_ui/*.xml'
   }
 
@@ -92,7 +95,8 @@ node {
   // only focuses on essential capability and therefore only
   // covers a small subset of the possibilities of UI behavior.
   stage('UI Tests') {
-    results["UI Tests"]["status"] = sh(script: 'cd src/ui_tests/java && ./gradlew clean test', returnStatus: true)
+    result = sh(script: 'cd src/ui_tests/java && ./gradlew clean test', returnStatus: true)
+    results["UI Tests"]["status"] = (result == 0) ? 2 : 1
     junit 'src/ui_tests/java/build/test-results/test/*.xml'    
   }
 
@@ -110,7 +114,8 @@ node {
   // we are importing has any major known vulnerabilities. If so,
   // the build will halt at this point.
   stage('Analyze security of dependencies') {
-    results["Dependency Check"]["status"] = sh(script: './gradlew dependencyCheckAnalyze', returnStatus: true)
+    result = sh(script: './gradlew dependencyCheckAnalyze', returnStatus: true)
+    results["Dependency Check"]["status"] = (result == 0) ? 2 : 1
   }
 
   // Run Jmeter performance testing https://jmeter.apache.org/
