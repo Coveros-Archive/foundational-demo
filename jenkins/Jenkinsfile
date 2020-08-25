@@ -146,6 +146,8 @@ node {
         def extra_details = ''
         if (t == 'Dependency Check') {
           extra_details += '\nReport URL: http://localhost:8080/workspace/Demo/build/reports/dependency-check-report.html'
+        } else if (t == 'UI BDD Tests') {
+          extra_details += '\nReport URL: http://localhost:8080/workspace/Demo/build/reports/bdd/cucumber-html-reports/overview-features.html'
         }
         sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
         --caseid=${i["id"]} --status=${i["status"]} --buildName='$t' \
