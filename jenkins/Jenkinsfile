@@ -6,7 +6,7 @@ node {
                  "Dependency Check": ["status": 0, "id" :39],
                  "API Tests": ["status": 0, "id": 40],
                  "UI BDD Tests": ["status": 0, "id": 41],
-                 "UI Tests": ["status": 0, "id": 42].
+                 "UI Tests": ["status": 0, "id": 42],
                  "Performance Tests": ["status":0, "id": 44]]
 
   stage ('Scripted Pipeline: Checkout Code') {
