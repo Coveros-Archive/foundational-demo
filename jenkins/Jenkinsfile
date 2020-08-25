@@ -6,15 +6,13 @@ node {
                  "Dependency Check": ["status": 0, "id" :39],
                  "API Tests": ["status": 0, "id": 40],
                  "UI BDD Tests": ["status": 0, "id": 41],
-                 "UI Tests": ["status": 0, "id": 42]]
+                 "UI Tests": ["status": 0, "id": 42].
+                 "Performance Tests": ["status":0, "id": 44]]
 
   stage ('Scripted Pipeline: Checkout Code') {
     cleanWs()
     checkout scm
   }
-  // agent any
-
-
 
   // build the war file (the binary).  This is the only
   // place that happens.
@@ -122,7 +120,8 @@ node {
   // This test simulates 50 users concurrently using our software
   // for a set of common tasks.
   stage('Testing performance') {
-    sh './gradlew runPerfTests'
+    result = sh(script: './gradlew runPerfTests', returnStatus: true)
+    results["Performance Tests"]["status"] = (result == 0) ? 2 : 1
   }
 
   // Runs mutation testing against some subset of our software
@@ -158,16 +157,5 @@ node {
   }
   stage('Build documentation') {
     sh './gradlew javadoc'
-  }
-
-
-  // This is the stage where we deploy to production.  If any test
-  // fails, we won't get here.  Note that we aren't really doing anything - this
-  // is a token step, to indicate whether we would have deployed or not.  Nothing actually
-  // happens, since this is a demo project.
-  // Remove this
-  stage('Deploy to Prod') {
-    // just a token operation while we pretend to deploy
-    sh 'sleep 5'
   }
 }
