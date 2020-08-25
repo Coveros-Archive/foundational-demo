@@ -150,7 +150,7 @@ node {
         sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
         --caseid=${i["id"]} --status=${i["status"]} --buildName='$t' \
         --message='See Jenkins for build log' \
-        --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL'"""
+        --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: ${JOB_DISPLAY_URL}${extra_details}'"""
       }
     }
   }
