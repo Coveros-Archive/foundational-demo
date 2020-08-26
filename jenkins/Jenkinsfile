@@ -1,4 +1,6 @@
 // This jenkinsfile is used to run CI/CD on my local (Windows) box, no VM's needed.
+def SPIRA_PASS = 2
+def SPIRA_FAIL = 1
 
 node {
 
@@ -39,7 +41,7 @@ node {
   // These tests do not require a running system.
   stage('Automated Acceptance Tests') {
       result = sh(script: './gradlew generateCucumberReports', returnStatus: true)
-      results["Acceptance Tests"]["status"] = (result == 0) ? 2 : 1
+      results["Acceptance Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
       // generate the code coverage report for jacoco
       sh './gradlew jacocoTestReport'
       junit 'build/test-results/bdd/*.xml'
@@ -71,7 +73,7 @@ node {
   // Run the tests which investigate the functioning of the API.
   stage('API Tests') {
     result = sh(script: './gradlew runApiTests', returnStatus: true)
-    results["API Tests"]["status"] = (result == 0) ? 2 : 1
+    results["API Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'build/test-results/api_tests/*.xml'
   }
 
@@ -84,7 +86,7 @@ node {
   stage('UI BDD Tests') {
     sh './gradlew runBehaveTests'
     result = sh(script: './gradlew generateCucumberReport', returnStatus: true)
-    results["UI BDD Tests"]["status"] = (result == 0) ? 2 : 1
+    results["UI BDD Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'build/test-results/bdd_ui/*.xml'
   }
 
@@ -94,7 +96,7 @@ node {
   // covers a small subset of the possibilities of UI behavior.
   stage('UI Tests') {
     result = sh(script: 'cd src/ui_tests/java && ./gradlew clean test', returnStatus: true)
-    results["UI Tests"]["status"] = (result == 0) ? 2 : 1
+    results["UI Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'src/ui_tests/java/build/test-results/test/*.xml'    
   }
 
@@ -113,7 +115,7 @@ node {
   // the build will halt at this point.
   stage('Analyze security of dependencies') {
     result = sh(script: './gradlew dependencyCheckAnalyze', returnStatus: true)
-    results["Dependency Check"]["status"] = (result == 0) ? 2 : 1
+    results["Dependency Check"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
   }
 
   // Run Jmeter performance testing https://jmeter.apache.org/
@@ -121,7 +123,7 @@ node {
   // for a set of common tasks.
   stage('Testing performance') {
     result = sh(script: './gradlew runPerfTests', returnStatus: true)
-    results["Performance Tests"]["status"] = (result == 0) ? 2 : 1
+    results["Performance Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
   }
 
   // Runs mutation testing against some subset of our software
