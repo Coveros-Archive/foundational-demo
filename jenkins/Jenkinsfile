@@ -61,7 +61,8 @@ node {
   // get it running, in preparation for tests that
   // require a whole system to be running.
   stage('Deploy to test') {
-    sh './gradlew deployToTestWindowsLocal -Pdeploy_directory=\"/Users/matthew/Downloads/apache-tomcat-9.0.37/webapps\"'
+    // if running locally, add path to tomcat e.g.: -Pdeploy_directory=\"/Users/<user>/Downloads/apache-tomcat-9.0.37/webapps\"
+    sh './gradlew deployToTestWindowsLocal'
     // pipenv needs to be installed and on the path for this to work.
     sh 'PIPENV_IGNORE_VIRTUALENVS=1 pipenv install'
 
