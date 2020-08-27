@@ -1,13 +1,20 @@
 // This jenkinsfile is used to run CI/CD on my local (Windows) box, no VM's needed.
+def SPIRA_PASS = 2
+def SPIRA_FAIL = 1
 
 node {
+
+  def results = ["Acceptance Tests": ["status": 0, "id": 35], 
+                 "Dependency Check": ["status": 0, "id" :39],
+                 "API Tests": ["status": 0, "id": 40],
+                 "UI BDD Tests": ["status": 0, "id": 41],
+                 "UI Tests": ["status": 0, "id": 42],
+                 "Performance Tests": ["status":0, "id": 44]]
+
   stage ('Scripted Pipeline: Checkout Code') {
     cleanWs()
     checkout scm
   }
-  // agent any
-
-
 
   // build the war file (the binary).  This is the only
   // place that happens.
@@ -18,7 +25,7 @@ node {
   // run all the unit tests - these do not require anything else
   // to be running and most run very quickly.
   stage('Unit Tests') {
-    sh './gradlew test'
+    sh(script: './gradlew test')
     junit 'build/test-results/test/*.xml'
   }
 
@@ -33,7 +40,8 @@ node {
   // See the files in src/bdd_test
   // These tests do not require a running system.
   stage('Automated Acceptance Tests') {
-      sh './gradlew generateCucumberReports'
+      result = sh(script: './gradlew generateCucumberReports', returnStatus: true)
+      results["Acceptance Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
       // generate the code coverage report for jacoco
       sh './gradlew jacocoTestReport'
       junit 'build/test-results/bdd/*.xml'
@@ -48,21 +56,25 @@ node {
       sh './gradlew checkQualityGate'
   }
 
-    // Move the binary over to the test environment and
-    // get it running, in preparation for tests that
-    // require a whole system to be running.
-    stage('Deploy to TEST') {
-      sh './gradlew deployToTestWindowsLocal -Pdeploy_directory=\"/Users/anaskvortsova/apache-tomcat-9.0.37/webapps\"'
-      // pipenv needs to be installed and on the path for this to work.
-      sh 'PIPENV_IGNORE_VIRTUALENVS=1 pipenv install'
-      // Wait here until the server tells us it's up and listening
-      sh './gradlew waitForHeartBeat'
+
+  // Move the binary over to the test environment and
+  // get it running, in preparation for tests that
+  // require a whole system to be running.
+  stage('Deploy to TEST') {
+    // if running locally, add path to tomcat e.g.: -Pdeploy_directory=\"/Users/<user>/Downloads/apache-tomcat-9.0.37/webapps\"
+    sh './gradlew deployToTestWindowsLocal'
+    // pipenv needs to be installed and on the path for this to work.
+    sh 'PIPENV_IGNORE_VIRTUALENVS=1 pipenv install'
+
+    // Wait here until the server tells us it's up and listening
+    sh './gradlew waitForHeartBeat'
   }
 
 
   // Run the tests which investigate the functioning of the API.
   stage('API Tests') {
-    sh './gradlew runApiTests'
+    result = sh(script: './gradlew runApiTests', returnStatus: true)
+    results["API Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'build/test-results/api_tests/*.xml'
   }
 
@@ -74,7 +86,8 @@ node {
   // that purpose, see the following stage, "UI Tests"
   stage('UI BDD Tests') {
     sh './gradlew runBehaveTests'
-    sh './gradlew generateCucumberReport'
+    result = sh(script: './gradlew generateCucumberReport', returnStatus: true)
+    results["UI BDD Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'build/test-results/bdd_ui/*.xml'
   }
 
@@ -83,7 +96,8 @@ node {
   // only focuses on essential capability and therefore only
   // covers a small subset of the possibilities of UI behavior.
   stage('UI Tests') {
-    sh 'cd src/ui_tests/java && ./gradlew clean test'
+    result = sh(script: 'cd src/ui_tests/java && ./gradlew clean test', returnStatus: true)
+    results["UI Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
     junit 'src/ui_tests/java/build/test-results/test/*.xml'    
   }
 
@@ -101,14 +115,16 @@ node {
   // we are importing has any major known vulnerabilities. If so,
   // the build will halt at this point.
   stage('Security: Dependency Analysis') {
-    sh './gradlew dependencyCheckAnalyze'
+    result = sh(script: './gradlew dependencyCheckAnalyze', returnStatus: true)
+    results["Dependency Check"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
   }
 
   // Run Jmeter performance testing https://jmeter.apache.org/
   // This test simulates 50 users concurrently using our software
   // for a set of common tasks.
   stage('Performance Tests') {
-    sh './gradlew runPerfTests'
+    result = sh(script: './gradlew runPerfTests', returnStatus: true)
+    results["Performance Tests"]["status"] = (result == 0) ? SPIRA_PASS : SPIRA_FAIL
   }
 
   // Runs mutation testing against some subset of our software
@@ -127,29 +143,22 @@ node {
 
   stage('Send Results to Spira') {
     withCredentials([usernamePassword(credentialsId: 'spira-api-token', passwordVariable: 'token', usernameVariable: 'user')]) {
-      // sh "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user --caseid=35 --status=2 --message 'Debug debug debug'"
-      echo "CUCUMBER tests report: http://localhost:8080/workspace/Demo/build/reports/bdd/cucumber-html-reports/overview-features.html"
-      def results = ["Acceptance Tests":35, "Dependency Check":39]
+
       results.each { t, i ->
+        def extra_details = ''
+        if (t == 'Dependency Check') {
+          extra_details += '\nReport URL: http://localhost:8080/workspace/Demo/build/reports/dependency-check-report.html'
+        } else if (t == 'UI BDD Tests') {
+          extra_details += '\nReport URL: http://localhost:8080/workspace/Demo/build/reports/bdd/cucumber-html-reports/overview-features.html'
+        }
         sh """PIPENV_IGNORE_VIRTUALENVS=1 pipenv run python collect-results-for-spira.py --token=$token --user=$user \
-        --caseid=$i --status=2 --buildName='$t' \
+        --caseid=${i["id"]} --status=${i["status"]} --buildName='$t' \
         --message='See Jenkins for build log' \
-        --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: $JOB_DISPLAY_URL'"""
+        --details='Updated by $JOB_BASE_NAME Build #$BUILD_NUMBER\nBuild: $BUILD_URL\n Job: ${JOB_DISPLAY_URL}${extra_details}'"""
       }
     }
   }
   stage('Build Documentation') {
     sh './gradlew javadoc'
-  }
-
-
-  // This is the stage where we deploy to production.  If any test
-  // fails, we won't get here.  Note that we aren't really doing anything - this
-  // is a token step, to indicate whether we would have deployed or not.  Nothing actually
-  // happens, since this is a demo project.
-  // Remove this
-  stage('Deploy to PROD') {
-    // just a token operation while we pretend to deploy
-    sh 'sleep 5'
   }
 }
