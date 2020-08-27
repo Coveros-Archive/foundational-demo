@@ -50,7 +50,6 @@ plugins {
     // see https://en.wikipedia.org/wiki/Tony_Hoare#Apologies_and_retractions
     // see https://github.com/kelloggm/checkerframework-gradle-plugin
     id "org.checkerframework" version "0.5.0"
-
 }
 
 // Configure our javadoc to include an overview for our project, a
