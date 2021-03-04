@@ -8,7 +8,7 @@ documentation_ ... but that doesn't mean we can't have pretty good documentation
 
 * Put Java on your PATH (see [JDK notes](#java-installation-notes))
 * Clone this repo
-* On the command line in the top directory of this repo, run `gradlew apprun`
+* On the command line in the top directory of this repo, run `gradlew apprun` or `./gradlew apprun` (macOS, linux)
 * Visit the application with your browser at http://localhost:8080/demo
 
 #### Summary:
